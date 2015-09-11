@@ -4,11 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core
+QT       += core gui
 QT       += sql
 QT       += printsupport
 
-QT       -= gui
 
 TARGET = Catalogue
 CONFIG   += console
