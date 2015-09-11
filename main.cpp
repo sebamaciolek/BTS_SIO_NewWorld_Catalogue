@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -26,10 +27,10 @@ int main(int argc, char *argv[])
     QSqlDatabase * baseNW;
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     baseNW = new QSqlDatabase(db);
-    baseNW->setHostName("localhost");
-    baseNW->setUserName("root");
-    baseNW->setDatabaseName("qt");
-    baseNW->setPassword("passf005");
+    baseNW->setHostName("172.16.63.111");
+    baseNW->setUserName("pbouffier");
+    baseNW->setDatabaseName("pbouffier");
+    baseNW->setPassword("4KdBi14qsP");
     baseNW->open();
 
     cout<<"Bienvenue dans le générateur de catalogue !"<<endl;
