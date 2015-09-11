@@ -7,7 +7,10 @@
 
 
 #include <QCoreApplication>
+#include <iostream>
 
+
+using namespace std;
 /**
  * @brief main Fonction principale d'où le programme découlera
  * @param argc Nombre d'arguments
@@ -19,7 +22,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     
-
+    cout<<"Ma bite !"<<endl;
 
     return a.exec();
 }
