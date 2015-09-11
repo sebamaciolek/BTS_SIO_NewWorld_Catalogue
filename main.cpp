@@ -9,7 +9,7 @@
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <iostream>
-#include <fstream>
+#include <QPrinter>
 
 using namespace std;
 
@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     baseNW->setDatabaseName("pbouffier");
     baseNW->setPassword("4KdBi14qsP");
     baseNW->open();
+
 
     cout<<"Bienvenue dans le générateur de catalogue !"<<endl;
 
