@@ -16,6 +16,8 @@
 #include <QDebug>
 #include <QTextCodec>
 #include <string>
+#include <QTextDocument>
+
 
 using namespace std;
 
@@ -31,6 +33,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 
+    /*
     // Connexion à la base de donnée
     QSqlDatabase * baseNW;
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
@@ -68,7 +71,7 @@ int main(int argc, char *argv[])
            printer.setOutputFormat(QPrinter::PdfFormat);
            printer.setFullPage(QPrinter::A4);
            printer.setOutputFileName("catalogues/" + query_utilisateur.value(0).toString() + "_catalogue_bouffier_pierre_sio.pdf");
-
+            printer.setCopyCount(5);
            // Déclaration du contenue du PDF
            QPainter painter;
            painter.begin(&printer);
@@ -100,13 +103,29 @@ int main(int argc, char *argv[])
            painter.drawText(300, 3400, query_pointrelais.value(5).toString());
            painter.drawText(300, 3600, query_pointrelais.value(8).toString() + " " + query_pointrelais.value(9).toString());
 
-           printer.newPage();
+           painter.drawText(300, 23600, query_pointrelais.value(8).toString() + " " + query_pointrelais.value(9).toString());
 
            painter.end();
        }
     }
-
     cout<<endl<<"La génération des catalogues est maintenant terminé !"<<endl<<endl<<endl;
+    */
+
+
+
+    // Création du catalogue en PDF
+    QPrinter printer(QPrinter::HighResolution); //create your QPrinter (don't need to be high resolution, anyway)
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setFullPage(QPrinter::A4);
+    printer.setOutputFileName("catalogues/saucisse.pdf");
+
+
+    QTextDocument doc;
+    doc.setHtml("coucou");
+    doc.setHtml("ooko");
+    doc.print(&printer);
+
+
 
     return 0;
 }
