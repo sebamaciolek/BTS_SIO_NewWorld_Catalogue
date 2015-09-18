@@ -72,18 +72,25 @@ int main(int argc, char *argv[])
            // Déclaration du contenue du PDF
            QPainter painter;
            painter.begin(&printer);
+           painter.setPen(QColor("#002F2F"));
            painter.setFont(QFont("Tahoma",65));
            painter.drawText(0, 700, "NewWorld");
            painter.setFont(QFont("Tahoma",14));
            painter.drawText(100, 950, "Bonjour " + query_utilisateur.value(4).toString() + " ! Voici votre catalogue...");
 
+
+           QRectF rectangle(5400, -100, 4000, 4000);
+           QImage image;
+           image.load("image/arbre.png");
+           painter.drawImage(rectangle, image);
+
            QSqlQuery query_pointrelais;
            query_pointrelais.exec("SELECT * FROM nw_pointrelais WHERE prID = '" + query_pointrelais_utilisateur.value(0).toString() + "'");
            query_pointrelais.first();
 
-           painter.setPen(QColor(1,1,1));
            painter.drawRect(0, 1800, 5000, 2000);
 
+           painter.setPen(QColor("#046380"));
            painter.setFont(QFont("Tahoma", 10));
            painter.drawText(300, 2200, "Point de vente N°: " + query_pointrelais.value(1).toString());
            painter.drawText(300, 2400, "Nom: " + query_pointrelais.value(2).toString());
@@ -93,8 +100,8 @@ int main(int argc, char *argv[])
            painter.drawText(300, 3400, query_pointrelais.value(5).toString());
            painter.drawText(300, 3600, query_pointrelais.value(8).toString() + " " + query_pointrelais.value(9).toString());
 
-
            printer.newPage();
+
            painter.end();
        }
     }
