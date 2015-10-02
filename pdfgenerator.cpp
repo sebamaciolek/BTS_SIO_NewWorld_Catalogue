@@ -97,5 +97,6 @@ void PDFGenerator::setPointRelais(QString prID, int height)
 
 void PDFGenerator::genererRayon(QString prID)
 {
-
+    QSqlQuery lot_point_relais;
+    lot_point_relais.exec("");
 }
