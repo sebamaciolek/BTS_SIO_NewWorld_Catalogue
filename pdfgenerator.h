@@ -15,6 +15,12 @@ class PDFGenerator
 public:
     PDFGenerator();
     void boucleUtilisateur();
+    void setPointRelais(QString prID, int height);
+    void genererRayon(QString prID);
+
+private:
+    int pdfHeight;
+    QPainter painter;
 };
 
 #endif // PDFGENERATOR_H
