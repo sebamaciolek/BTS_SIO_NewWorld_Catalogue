@@ -40,7 +40,7 @@ void PDFGenerator::boucleUtilisateur()
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setFullPage(QPrinter::A4);
         printer.setOutputFileName("catalogues/" + query_utilisateur.value(0).toString() + "_catalogue_bouffier_pierre_sio.pdf");
-
+            qDebug()<<printer.width();
         // Déclaration du contenue du PDF
         painter.begin(&printer);
         painter.setPen(QColor("#002F2F"));
@@ -108,7 +108,7 @@ void PDFGenerator::genererRayon(QString prID)
 
         painter.setFont(QFont("Tahoma", 17));
         painter.drawText(500, pdfHeight + 200, lot_point_relais.value(1).toString());
-        painter.drawLine(300, pdfHeight + 400, 1500, pdfHeight + 400);
+        painter.drawLine(300, pdfHeight + 400, 8517, pdfHeight + 400);
         pdfHeight += 600;
     }
 }
