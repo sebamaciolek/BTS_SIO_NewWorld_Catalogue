@@ -40,7 +40,7 @@ void PDFGenerator::boucleUtilisateur()
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setFullPage(QPrinter::A4);
         printer.setOutputFileName("catalogues/" + query_utilisateur.value(0).toString() + "_catalogue_bouffier_pierre_sio.pdf");
-            qDebug()<<printer.width();
+
         // Déclaration du contenue du PDF
         painter.begin(&printer);
         painter.setPen(QColor("#002F2F"));
@@ -58,8 +58,6 @@ void PDFGenerator::boucleUtilisateur()
         // On vérifie leurs nombres de points relais
         QSqlQuery query_pointrelais_utilisateur;
         query_pointrelais_utilisateur.exec("SELECT prID FROM nw_utilisateurpointvente inner join nw_lotrelais on prID = relaisID WHERE userID = '" + query_utilisateur.value(0).toString() + "' GROUP BY prID");
-
-        cout<<query_pointrelais_utilisateur.size()<<endl;
 
         // S'il y a plus d'un point relais, alors on crée un catalogue pour lui
         if(query_pointrelais_utilisateur.size() > 0)
@@ -79,6 +77,7 @@ void PDFGenerator::boucleUtilisateur()
 
 void PDFGenerator::setPointRelais(QString prID)
 {
+
     int height = pdfHeight;
     QSqlQuery query_pointrelais;
     query_pointrelais.exec("SELECT * FROM nw_pointrelais WHERE prID = '" + prID + "'");
