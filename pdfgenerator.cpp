@@ -1,4 +1,5 @@
 #include "pdfgenerator.h"
+#include <QDebug>
 
 PDFGenerator::PDFGenerator()
 {
@@ -24,7 +25,7 @@ void PDFGenerator::boucleUtilisateur()
 
     // Première requête pour lister les utilisateurs
     QSqlQuery query_utilisateur;
-    query_utilisateur.exec("SELECT * FROM nw_utilisateur");
+    query_utilisateur.exec("SELECT * FROM nw_utilisateur natural join nw_utilisateurpointvente group by userID");
     while(query_utilisateur.next())
     {
 
@@ -54,18 +55,19 @@ void PDFGenerator::boucleUtilisateur()
         image.load("image/arbre.png");
         painter.drawImage(rectangle, image);
 
-
         // On vérifie leurs nombres de points relais
         QSqlQuery query_pointrelais_utilisateur;
-        query_pointrelais_utilisateur.exec("SELECT prID FROM nw_utilisateurpointvente WHERE userID = '" + query_utilisateur.value(0).toString() + "'");
+        query_pointrelais_utilisateur.exec("SELECT prID FROM nw_utilisateurpointvente inner join nw_lotrelais on prID = relaisID WHERE userID = '" + query_utilisateur.value(0).toString() + "' GROUP BY prID");
+
+        cout<<query_pointrelais_utilisateur.size()<<endl;
 
         // S'il y a plus d'un point relais, alors on crée un catalogue pour lui
-        if(query_pointrelais_utilisateur.numRowsAffected() > 0)
+        if(query_pointrelais_utilisateur.size() > 0)
         {
             // On parcourt les points relais
             while(query_pointrelais_utilisateur.next())
             {
-                setPointRelais(query_pointrelais_utilisateur.value(0).toString(), pdfHeight);
+                setPointRelais(query_pointrelais_utilisateur.value(0).toString());
             }
         }
 
@@ -75,8 +77,9 @@ void PDFGenerator::boucleUtilisateur()
     cout<<endl<<"La génération des catalogues est maintenant terminé !"<<endl<<endl<<endl;
 }
 
-void PDFGenerator::setPointRelais(QString prID, int height)
+void PDFGenerator::setPointRelais(QString prID)
 {
+    int height = pdfHeight;
     QSqlQuery query_pointrelais;
     query_pointrelais.exec("SELECT * FROM nw_pointrelais WHERE prID = '" + prID + "'");
     query_pointrelais.first();
@@ -97,6 +100,15 @@ void PDFGenerator::setPointRelais(QString prID, int height)
 
 void PDFGenerator::genererRayon(QString prID)
 {
+    pdfHeight += 200;
     QSqlQuery lot_point_relais;
-    lot_point_relais.exec("SELECT nw_lot.* FROM nw_lot INNER JOIN nw_lot");
+    lot_point_relais.exec("SELECT rayID, rayLib from nw_rayon inner join nw_categorie on rayID = catRayon inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
+    while(lot_point_relais.next())
+    {
+
+        painter.setFont(QFont("Tahoma", 17));
+        painter.drawText(500, pdfHeight + 200, lot_point_relais.value(1).toString());
+        painter.drawLine(300, pdfHeight + 400, 1500, pdfHeight + 400);
+        pdfHeight += 600;
+    }
 }
