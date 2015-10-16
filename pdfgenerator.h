@@ -17,11 +17,15 @@ public:
     void boucleUtilisateur();
     void setPointRelais(QString prID);
     void genererRayon(QString prID);
+    void genererCategorie(QString prID);
+    void ajoutNouvellePage();
 
 private:
     int pdfHeight;
+    int numPointRelais;
     QPainter painter;
     QString pointVenteActuel;
+    QPrinter* printerGlobal;
 };
 
 #endif // PDFGENERATOR_H

@@ -28,9 +28,8 @@ void PDFGenerator::boucleUtilisateur()
     query_utilisateur.exec("SELECT * FROM nw_utilisateur natural join nw_utilisateurpointvente group by userID");
     while(query_utilisateur.next())
     {
-
+        numPointRelais = 0;
         pdfHeight = 1800;
-
         // Indiquation de la création du catalogue
         QString valeur = "Generation du formulaire pour: " + query_utilisateur.value(1).toString() + " (" + query_utilisateur.value(5).toString() + ")";
         cout<<valeur.toStdString()<<endl;
@@ -40,6 +39,7 @@ void PDFGenerator::boucleUtilisateur()
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setFullPage(QPrinter::A4);
         printer.setOutputFileName("catalogues/" + query_utilisateur.value(0).toString() + "_catalogue_bouffier_pierre_sio.pdf");
+        printerGlobal = &printer;
         // Déclaration du contenue du PDF
         painter.begin(&printer);
         painter.setPen(QColor("#002F2F"));
@@ -76,22 +76,27 @@ void PDFGenerator::boucleUtilisateur()
 
 void PDFGenerator::setPointRelais(QString prID)
 {
-    int height = pdfHeight;
+    if(numPointRelais > 0)
+    {
+        printerGlobal->newPage();
+        pdfHeight = 0;
+    }
     QSqlQuery query_pointrelais;
     query_pointrelais.exec("SELECT * FROM nw_pointrelais WHERE prID = '" + prID + "'");
     query_pointrelais.first();
 
-    painter.drawRect(0, height, 5000, 1800);
+    painter.drawRect(0, pdfHeight, 5000, 1800);
     painter.setPen(QColor("#046380"));
     painter.setFont(QFont("Tahoma", 10));
-    painter.drawText(300, height + 200, "Point de vente N°: " + query_pointrelais.value(1).toString());
-    painter.drawText(300, height + 400, "Nom: " + query_pointrelais.value(2).toString());
-    painter.drawText(300, height + 600, "Adresse: " + query_pointrelais.value(7).toString());
-    painter.drawText(300, height + 800, "Email: " + query_pointrelais.value(6).toString());
-    painter.drawText(300, height + 1200, "M. " + query_pointrelais.value(3).toString() + " " + query_pointrelais.value(4).toString());
-    painter.drawText(300, height + 1400, query_pointrelais.value(5).toString());
-    painter.drawText(300, height + 1600, query_pointrelais.value(8).toString() + " " + query_pointrelais.value(9).toString());
+    painter.drawText(300, pdfHeight + 200, "Point de vente N°: " + query_pointrelais.value(1).toString());
+    painter.drawText(300, pdfHeight + 400, "Nom: " + query_pointrelais.value(2).toString());
+    painter.drawText(300, pdfHeight + 600, "Adresse: " + query_pointrelais.value(7).toString());
+    painter.drawText(300, pdfHeight + 800, "Email: " + query_pointrelais.value(6).toString());
+    painter.drawText(300, pdfHeight + 1200, "M. " + query_pointrelais.value(3).toString() + " " + query_pointrelais.value(4).toString());
+    painter.drawText(300, pdfHeight + 1400, query_pointrelais.value(5).toString());
+    painter.drawText(300, pdfHeight + 1600, query_pointrelais.value(8).toString() + " " + query_pointrelais.value(9).toString());
     pdfHeight += 2000;
+    numPointRelais++;
     genererRayon(prID);
 }
 
@@ -101,10 +106,26 @@ void PDFGenerator::genererRayon(QString prID)
     lot_point_relais.exec("SELECT rayID, rayLib from nw_rayon inner join nw_categorie on rayID = catRayon inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
     while(lot_point_relais.next())
     {
-
+        ajoutNouvellePage();
         painter.setFont(QFont("Tahoma", 17));
         painter.drawText(500, pdfHeight + 200, lot_point_relais.value(1).toString());
         painter.drawLine(300, pdfHeight + 400, 8517, pdfHeight + 400);
         pdfHeight += 600;
+        genererCategorie(prID);
+    }
+}
+void PDFGenerator::genererCategorie(QString prID)
+{
+    QSqlQuery lot_point_relais;
+    lot_point_relais.exec("SELECT rayID, rayLib from nw_rayon inner join nw_categorie on rayID = catRayon inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
+}
+
+void PDFGenerator::ajoutNouvellePage()
+{
+    qDebug()<<pdfHeight;
+    if(pdfHeight > 12500)
+    {
+        printerGlobal->newPage();
+        pdfHeight = 200;
     }
 }
