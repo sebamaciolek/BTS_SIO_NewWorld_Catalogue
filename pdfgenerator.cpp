@@ -36,11 +36,10 @@ void PDFGenerator::boucleUtilisateur()
         cout<<valeur.toStdString()<<endl;
 
         // Création du catalogue en PDF
-        QPrinter printer(QPrinter::HighResolution); //create your QPrinter (don't need to be high resolution, anyway)
+        QPrinter printer(QPrinter::HighResolution);
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setFullPage(QPrinter::A4);
         printer.setOutputFileName("catalogues/" + query_utilisateur.value(0).toString() + "_catalogue_bouffier_pierre_sio.pdf");
-
         // Déclaration du contenue du PDF
         painter.begin(&printer);
         painter.setPen(QColor("#002F2F"));
@@ -77,7 +76,6 @@ void PDFGenerator::boucleUtilisateur()
 
 void PDFGenerator::setPointRelais(QString prID)
 {
-
     int height = pdfHeight;
     QSqlQuery query_pointrelais;
     query_pointrelais.exec("SELECT * FROM nw_pointrelais WHERE prID = '" + prID + "'");
@@ -99,7 +97,6 @@ void PDFGenerator::setPointRelais(QString prID)
 
 void PDFGenerator::genererRayon(QString prID)
 {
-    pdfHeight += 200;
     QSqlQuery lot_point_relais;
     lot_point_relais.exec("SELECT rayID, rayLib from nw_rayon inner join nw_categorie on rayID = catRayon inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
     while(lot_point_relais.next())
