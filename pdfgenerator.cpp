@@ -12,8 +12,6 @@ PDFGenerator::PDFGenerator()
     baseNW->setDatabaseName("pbouffier");
     baseNW->setPassword("4KdBi14qsP");
     baseNW->open();
-
-
 }
 
 void PDFGenerator::boucleUtilisateur()
@@ -117,12 +115,11 @@ void PDFGenerator::genererRayon(QString prID)
 void PDFGenerator::genererCategorie(QString prID)
 {
     QSqlQuery lot_point_relais;
-    lot_point_relais.exec("SELECT rayID, rayLib from nw_rayon inner join nw_categorie on rayID = catRayon inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
+    lot_point_relais.exec("SELECT catID, catLib from nw_categorie inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
 }
 
 void PDFGenerator::ajoutNouvellePage()
 {
-    qDebug()<<pdfHeight;
     if(pdfHeight > 12500)
     {
         printerGlobal->newPage();
