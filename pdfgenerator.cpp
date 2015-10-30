@@ -7,10 +7,10 @@ PDFGenerator::PDFGenerator()
     QSqlDatabase * baseNW;
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     baseNW = new QSqlDatabase(db);
-    baseNW->setHostName("172.16.63.111");
-    baseNW->setUserName("pbouffier");
-    baseNW->setDatabaseName("pbouffier");
-    baseNW->setPassword("4KdBi14qsP");
+    baseNW->setHostName("localhost");
+    baseNW->setUserName("root");
+    baseNW->setDatabaseName("nw");
+    baseNW->setPassword("111");
     baseNW->open();
 }
 
@@ -105,17 +105,72 @@ void PDFGenerator::genererRayon(QString prID)
     while(lot_point_relais.next())
     {
         ajoutNouvellePage();
+        painter.setPen(QColor("#046380"));
         painter.setFont(QFont("Tahoma", 17));
-        painter.drawText(500, pdfHeight + 200, lot_point_relais.value(1).toString());
-        painter.drawLine(300, pdfHeight + 400, 8517, pdfHeight + 400);
+        painter.drawText(300, pdfHeight + 200, lot_point_relais.value(1).toString());
+        painter.drawLine(100, pdfHeight + 400, 8917, pdfHeight + 400);
         pdfHeight += 600;
-        genererCategorie(prID);
+        genererCategorie(prID, lot_point_relais.value(0).toString());
     }
 }
-void PDFGenerator::genererCategorie(QString prID)
+void PDFGenerator::genererCategorie(QString prID, QString rayID)
 {
     QSqlQuery lot_point_relais;
-    lot_point_relais.exec("SELECT catID, catLib from nw_categorie inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' GROUP BY rayID;");
+    lot_point_relais.exec("SELECT catID, catLib, catRayon from nw_categorie inner join nw_produit on catID = prodCategorie inner join nw_lot on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' AND catRayon = '" + rayID + "' GROUP BY catID;");
+    while(lot_point_relais.next())
+    {
+        ajoutNouvellePage();
+        painter.setPen(QColor("#047080"));
+        QFont font("Tahoma", 11);
+        font.setItalic(true);
+        painter.setFont(font);
+        painter.drawText(300, pdfHeight + 100, "-> " + lot_point_relais.value(1).toString());
+        pdfHeight += 400;
+        genererLot(prID, lot_point_relais.value(0).toString());
+    }
+    pdfHeight += 300;
+}
+
+void PDFGenerator::genererLot(QString prID, QString catID)
+{
+    ajoutNouvellePage();
+    painter.setPen(QColor("#487080"));
+    QFont font("Tahoma", 9);
+    font.setBold(true);
+    font.setItalic(true);
+    painter.setFont(font);
+    painter.drawText(700, pdfHeight + 200, "Nom produit");
+    painter.drawText(2700, pdfHeight + 200, "Prix/Unité");
+    painter.drawText(3900, pdfHeight + 200, "Mode de prod.");
+    painter.drawText(5400, pdfHeight + 200, "Date / Conservation");
+    painter.drawText(7400, pdfHeight + 200, "Lieu de culture");
+
+    font.setBold(false);
+    font.setItalic(false);
+    painter.setFont(font);
+    pdfHeight += 800;
+
+    QSqlQuery lot_point_relais;
+    lot_point_relais.exec("SELECT nw_lot.*, nw_produit.* from nw_lot inner join nw_produit on prodID = lotProduit natural join nw_lotrelais WHERE relaisID = '" + prID + "' AND prodCategorie = '" + catID + "' ORDER BY prodID;");
+    while(lot_point_relais.next())
+    {
+        ajoutNouvellePage();
+
+        QRectF rectangleImage(-250, pdfHeight - 280, 580, 580);
+        QRectF rectangleBorder(rectangleImage.x() - 30, rectangleImage.y() - 30, rectangleImage.width() + 60, rectangleImage.height() + 60);
+
+        painter.drawRoundRect(rectangleBorder, 4, 4);
+        QImage image;
+        image.load(lot_point_relais.value(11).toString());
+        painter.drawImage(rectangleImage, image);
+
+        painter.drawText(600, pdfHeight + 100, lot_point_relais.value(13).toString());
+        painter.drawText(2800, pdfHeight + 100, lot_point_relais.value(2).toString() + "/" + lot_point_relais.value(3).toString());
+        painter.drawText(4000, pdfHeight + 100, lot_point_relais.value(4).toString());
+        painter.drawText(5500, pdfHeight + 100, lot_point_relais.value(5).toString() + " / " + lot_point_relais.value(6).toString() + " J.");
+        painter.drawText(7500, pdfHeight + 100, lot_point_relais.value(8).toString());
+        pdfHeight += 800;
+    }
 }
 
 void PDFGenerator::ajoutNouvellePage()

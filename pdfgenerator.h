@@ -17,7 +17,8 @@ public:
     void boucleUtilisateur();
     void setPointRelais(QString prID);
     void genererRayon(QString prID);
-    void genererCategorie(QString prID);
+    void genererCategorie(QString prID, QString rayID);
+    void genererLot(QString prID, QString catID);
     void ajoutNouvellePage();
 
 private:
