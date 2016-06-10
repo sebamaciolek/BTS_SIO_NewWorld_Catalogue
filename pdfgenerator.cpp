@@ -20,9 +20,9 @@ PDFGenerator::PDFGenerator()
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     baseNW = new QSqlDatabase(db);
     baseNW->setHostName("localhost");
-    baseNW->setUserName("root");
-    baseNW->setDatabaseName("nw");
-    baseNW->setPassword("111");
+    baseNW->setUserName("sebastianm");
+    baseNW->setDatabaseName("catalogue");
+    baseNW->setPassword("smaciolek");
     baseNW->open();
 }
 
@@ -219,10 +219,10 @@ void PDFGenerator::genererLot(QString prID, QString catID)
         QRectF rectangleBorder(rectangleImage.x() - 30, rectangleImage.y() - 30, rectangleImage.width() + 60, rectangleImage.height() + 60);
         painter.drawRoundRect(rectangleBorder, 4, 4);
         QImage image;
-        image.load(lot_point_relais.value(11).toString());
+        image.load("image/defaut.jpg");
         painter.drawImage(rectangleImage, image);
         // Affichage des détails du lot
-        painter.drawText(600, pdfHeight + 100, lot_point_relais.value(13).toString());
+        painter.drawText(600, pdfHeight + 100, lot_point_relais.value(12).toString());
         painter.drawText(2800, pdfHeight + 100, lot_point_relais.value(2).toString() + "/" + lot_point_relais.value(3).toString());
         painter.drawText(4000, pdfHeight + 100, lot_point_relais.value(4).toString());
         painter.drawText(5500, pdfHeight + 100, lot_point_relais.value(5).toString() + " / " + lot_point_relais.value(6).toString() + " J.");
